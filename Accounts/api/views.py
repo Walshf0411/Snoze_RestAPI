@@ -4,6 +4,9 @@ from rest_framework.views import APIView
 from django.core.exceptions import ObjectDoesNotExist
 from rest_framework.response import Response
 from rest_framework.authtoken.models import Token
+from rest_framework.permissions import IsAdminUser
+from Accounts.models import Snoze_User
+from rest_framework import status as code
 
 class User_Registration_API_View(generics.CreateAPIView):
     '''
@@ -11,10 +14,10 @@ class User_Registration_API_View(generics.CreateAPIView):
     '''
     serializer_class = serializers.User_Registration_API_Serializer
     # this class specifies that this view is only accessible by staff users
-    permission_classes = ('IsAdminUser', )
+    permission_classes = (IsAdminUser, )
 
 class User_Deactivate_API_View(APIView):
-    permission_classes = ('IsAdminUser', )
+    permission_classes = (IsAdminUser, )
 
     def post(self, request, format=None):
         data = {
@@ -38,3 +41,22 @@ class User_Deactivate_API_View(APIView):
             # if the user is deactivated successfully return success 200
             return Response(data=data, status=200)
             
+class UserExistsAPIView(APIView):
+    permission_classes = (IsAdminUser, )
+
+    def post(self, request, format=None):
+        if 'username' in request.POST:
+            username = request.POST['username']
+            try:
+                # Check if username is taken in the snoze_user 
+                Snoze_User.objects.get(username=username)
+                data = {
+                    "failed": "username taken",
+                }
+                return Response(data=data, status=code.HTTP_400_BAD_REQUEST)
+            except ObjectDoesNotExist:
+                # username does not exist, can take this username
+                data = {
+                    "success": "Username available.",
+                }
+                return Response(data=data, status=code.HTTP_200_OK)

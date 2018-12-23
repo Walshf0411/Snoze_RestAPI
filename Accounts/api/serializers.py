@@ -26,4 +26,4 @@ class User_Registration_API_Serializer(serializers.ModelSerializer):
     class Meta:
         # this class specifies the data about the outer class
         model = Snoze_User
-        fields = ['first_name', 'last_name', 'username', 'password', 'email', 'phone_number']
+        fields = ['first_name', 'last_name', 'username', 'password', 'email', 'phone_number', 'profile_picture']
