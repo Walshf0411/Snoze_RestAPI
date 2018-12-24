@@ -43,3 +43,29 @@ class Like(models.Model):
     user_id = models.ForeignKey(Snoze_User, on_delete = models.CASCADE)
     comment = models.CharField(max_length=500)
     '''
+
+class Favourite_Playlist(models.Model):
+    '''
+        An entry in this table represents that the user has favourted the corresponding playlist
+    '''
+    user_id = models.ForeignKey(Snoze_User, on_delete=models.CASCADE)
+    playlist_id = models.ForeignKey(Playlist, on_delete=models.CASCADE)
+
+class Favourite_Song(models.Model):
+    '''
+        An entry in this table represents that the user has favourted the corresponding playlist
+    '''
+    user_id = models.ForeignKey(Snoze_User, on_delete=models.CASCADE)
+    song_id = models.ForeignKey(Song, on_delete=models.CASCADE)
+
+class Recent(models.Model):
+    '''
+        This table is like a stack for the users. A song played by the user would first be checked for 
+        in this table, if not found an entry would be made in this table else the song field from this 
+        table would be retrieved and the time would be retrieved.
+        Also the table would delete the songs that the is has the minimum value in the last_played
+        when the decided limit for the recent songs is reached. (for premium users there will be no limit)
+    '''
+    user_id = models.ForeignKey(Snoze_User, on_delete=models.CASCADE)
+    song_id = models.ForeignKey(Song, on_delete=models.CASCADE)
+    last_played = models.DateTimeField(auto_now=True) 
